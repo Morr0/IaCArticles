@@ -1,0 +1,33 @@
+Parameters:
+    ServerType:
+      Description: The EC2 instance type
+      Type: String
+Description: "Hello world"
+Resources:
+  ServerSecurityGroup:
+    Type: AWS::EC2::SecurityGroup
+    Properties:
+      GroupDescription: Server Security Group
+      SecurityGroupIngress:
+      - IpProtocol: icmp
+        CidrIp: 0.0.0.0/0
+        FromPort: -1
+        ToPort: -1
+  Server:
+    Type: AWS::EC2::Instance
+    Properties:
+      BlockDeviceMappings:
+        - DeviceName: "/dev/sda1"
+          Ebs: 
+            VolumeSize: 10
+            VolumeType: gp3
+            DeleteOnTermination: true
+      ImageId: ami-07fbdcfe29326c4fb
+      InstanceType: !Ref ServerType
+      SecurityGroups:
+          - !Ref ServerSecurityGroup
+    DependsOn:
+      - ServerSecurityGroup
+Outputs:
+  InstanceId:
+    Value: !Ref Server
